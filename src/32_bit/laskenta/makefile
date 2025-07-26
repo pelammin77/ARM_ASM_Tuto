@@ -16,8 +16,8 @@ $(TARGET): $(OBJ)
 	$(LD) -o $@ $<
 
 run: all
-	-./$(TARGET)
-	echo "Exit-koodi (tulos): $$?"
+	@./$(TARGET); RET=$$?; echo "Exit-koodi (tulos): $$RET"
+
 
 clean:
 	rm -f $(TARGET) $(OBJ)
