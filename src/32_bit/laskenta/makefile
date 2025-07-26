@@ -1,4 +1,3 @@
-# Tiedostonimi ilman päätettä
 TARGET = laskenta
 SRC = $(TARGET).s
 OBJ = $(TARGET).o
@@ -17,7 +16,7 @@ $(TARGET): $(OBJ)
 	$(LD) -o $@ $<
 
 run: all
-	./$(TARGET)
+	-./$(TARGET)
 	echo "Exit-koodi (tulos): $$?"
 
 clean:
