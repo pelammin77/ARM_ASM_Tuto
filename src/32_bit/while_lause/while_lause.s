@@ -1,6 +1,6 @@
 /*
  ============================================================================
-  ARM32 Assembly: while-silmukan toteutus + tulostus
+  ARM32 Assembly: while-silmukan toteutus + tulostus (korjattu)
   ------------------------------------------
   Vastaa C-koodia:
       int i = 0;
@@ -10,14 +10,12 @@
       }
       return i;
 
-  Perusideat:
-    - Käytetään rekisteriä r0 laskurina
-    - Rekisterissä r1 on vertailuarvo (5)
-    - Silmukka käyttää labelia: loop:
-    - Käytetään 'cmp' + 'bge' vertailua (jump jos r0 >= 5)
-    - Tulostus tehdään syscall 4 (write)
-    - ASCII-muunnos toimii vain arvoille 0–9
-
+  Keskeiset kohdat:
+    - r0 toimii laskurina (i)
+    - r1 on raja-arvo 5
+    - Tulostus: syscall 4 (write)
+    - ASCII-muunnos toimii vain 0–9
+    - r0 kopioidaan ennen ASCII-muunnosta → vältetään bugi
  ============================================================================
 */
 
@@ -34,32 +32,32 @@ buffer:     .skip 1      @ 1 merkki tulostettavalle numerolle
 .section .text
 _start:
     mov r0, #0          @ r0 = 0 (laskurin alustus)
-    mov r1, #5          @ r1 = 5 (raja-arvo)
+    mov r1, #5          @ r1 = 5 (vertailuarvo)
 
 loop:
-    cmp r0, r1          @ vertaillaan: onko r0 < 5?
-    bge done            @ jos r0 >= 5 → hyppää ulos silmukasta
+    cmp r0, r1          @ vertaillaan: r0 < 5?
+    bge done            @ jos r0 >= 5 → pois silmukasta
 
-    @ Tulostetaan merkkijono "i = "
-    mov r2, #1          @ tiedostodeskriptoriksi stdout (1)
-    ldr r3, =prefix     @ osoitin alkuun: "i = "
-    mov r4, #4          @ pituus 4 merkkiä
+    @ Tulostetaan "i = "
+    mov r2, #1          @ stdout = 1
+    ldr r3, =prefix     @ osoitin "i = "
+    mov r4, #4          @ merkkien määrä
     mov r7, #4          @ syscall 4 = write
-    mov r0, r2          @ r0 = 1 (stdout)
-    mov r1, r3          @ r1 = osoitin tekstiin
-    mov r2, r4          @ r2 = merkkien määrä
+    mov r0, r2          @ fd = stdout
+    mov r1, r3          @ osoitin dataan
+    mov r2, r4          @ pituus
     svc 0
 
-    @ Muunna r0 (laskurin arvo) ASCII-merkiksi ja kirjoita bufferiin
-    ldr r1, =buffer
-    add r2, r0, #'0'    @ ASCII-koodi numerolle (vain 0–9)
-    strb r2, [r1]       @ kirjoita merkki bufferiin
+    @ ASCII-muunnos ja tulostus numerosta
+    ldr r1, =buffer     @ osoitin bufferiin
+    mov r3, r0          @ kopioidaan r0 → r3, jotta r0 ei mene rikki
+    add r2, r3, #'0'    @ ASCII-muunnos: 0 → '0', 1 → '1', jne.
+    strb r2, [r1]       @ kirjoita yksi merkki bufferiin
 
-    @ Tulostetaan bufferin sisältö (1 merkki)
-    mov r0, #1
+    mov r0, #1          @ stdout
     ldr r1, =buffer
-    mov r2, #1
-    mov r7, #4
+    mov r2, #1          @ pituus 1
+    mov r7, #4          @ syscall 4
     svc 0
 
     @ Tulostetaan rivinvaihto
@@ -69,10 +67,10 @@ loop:
     mov r7, #4
     svc 0
 
-    @ Kasvata laskuria (i++)
+    @ i++
     add r0, r0, #1
-    b loop              @ hyppää takaisin silmukan alkuun
+    b loop
 
 done:
     mov r7, #1          @ syscall 1 = exit
-    svc 0               @ poistu ohjelmasta, r0 on tulos
+    svc 0               @ palauttaa r0 arvon (tässä 5)
