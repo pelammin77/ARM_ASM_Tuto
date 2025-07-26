@@ -18,7 +18,6 @@
     - r0 kopioidaan ennen ASCII-muunnosta → vältetään bugi
  ============================================================================
 */
-
 .global _start
 
 .section .data
@@ -31,36 +30,34 @@ buffer:     .skip 1      @ 1 merkki tulostettavalle numerolle
 
 .section .text
 _start:
-    mov r0, #0          @ r0 = 0 (laskurin alustus)
-    mov r1, #5          @ r1 = 5 (vertailuarvo)
+    mov r4, #0          @ r4 = laskuri (i = 0)
+    mov r1, #5          @ r1 = vertailuarvo 5
 
 loop:
-    cmp r0, r1          @ vertaillaan: r0 < 5?
-    bge done            @ jos r0 >= 5 → pois silmukasta
+    cmp r4, r1          @ vertaillaan: i < 5?
+    bge done            @ jos i >= 5 → ulos
 
-    @ Tulostetaan "i = "
-    mov r2, #1          @ stdout = 1
-    ldr r3, =prefix     @ osoitin "i = "
-    mov r4, #4          @ merkkien määrä
-    mov r7, #4          @ syscall 4 = write
-    mov r0, r2          @ fd = stdout
-    mov r1, r3          @ osoitin dataan
-    mov r2, r4          @ pituus
+    @ Tulosta "i = "
+    mov r0, #1
+    ldr r1, =prefix
+    mov r2, #4
+    mov r7, #4
     svc 0
 
-    @ ASCII-muunnos ja tulostus numerosta
-    ldr r1, =buffer     @ osoitin bufferiin
-    mov r3, r0          @ kopioidaan r0 → r3, jotta r0 ei mene rikki
-    add r2, r3, #'0'    @ ASCII-muunnos: 0 → '0', 1 → '1', jne.
-    strb r2, [r1]       @ kirjoita yksi merkki bufferiin
-
-    mov r0, #1          @ stdout
+    @ ASCII-muunnos laskurin arvosta
     ldr r1, =buffer
-    mov r2, #1          @ pituus 1
-    mov r7, #4          @ syscall 4
+    mov r3, r4          @ kopioidaan laskuri
+    add r2, r3, #'0'    @ ASCII: 0–9
+    strb r2, [r1]
+
+    @ Tulosta numero
+    mov r0, #1
+    ldr r1, =buffer
+    mov r2, #1
+    mov r7, #4
     svc 0
 
-    @ Tulostetaan rivinvaihto
+    @ Tulosta rivinvaihto
     mov r0, #1
     ldr r1, =newline
     mov r2, #1
@@ -68,9 +65,10 @@ loop:
     svc 0
 
     @ i++
-    add r0, r0, #1
+    add r4, r4, #1
     b loop
 
 done:
-    mov r7, #1          @ syscall 1 = exit
-    svc 0               @ palauttaa r0 arvon (tässä 5)
+    mov r0, r4          @ palautetaan laskurin lopullinen arvo (5)
+    mov r7, #1
+    svc 0
