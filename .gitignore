@@ -1,0 +1,19 @@
+# Object files
+*.o
+
+# Linkitetyt suoritustiedostot (yleensä ilman tiedostopäätettä)
+a.out
+main
+exit
+testi
+
+# Varmuuskopiot ja editoritiedostot
+*~
+*.swp
+*.swo
+
+# VS Code -kansio (jos käytät sitä)
+.vscode/
+
+# Mahdolliset logit
+*.log
