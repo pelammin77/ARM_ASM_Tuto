@@ -52,6 +52,7 @@ _start:
     svc 0
 
     @ Poistu ohjelmasta, palauta r0 = tulos
+    mov r0, r3          @ palautetaan laskun tulos ennen exit-kutsua
     mov r7, #1
     svc 0
 
