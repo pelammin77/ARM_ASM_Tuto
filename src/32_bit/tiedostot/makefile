@@ -23,6 +23,6 @@ $(TARGET): $(OBJ)
 run: all
 	@./$(TARGET); RET=$$?; echo "Exit-koodi (palautettu arvo): $$RET"
 
-# Siivoa käännöstiedostot
+# Siivoa käännöstiedostot ja testitiedosto
 clean:
-	rm -f $(TARGET) $(OBJ)
+	rm -f $(TARGET) $(OBJ) testi.txt
