@@ -4,15 +4,16 @@
 
 .text
 main:
+    push {lr}           @ Tallenna paluuosoite
+
     mov r0, #6          @ r0 = x
     mov r1, #7          @ r1 = y
     bl kerro            @ kutsu C-funktiota: r0 = kerro(r0, r1)
-                        @ tulos tulee takaisin r0:aan
 
-    @ Tulosta tulos C-puolella
-    bl print_result     @ oma C-funktio joka käyttää printf:tä
+    bl print_result     @ Tulosta tulos
 
-    mov r7, #1          @ exit
-    svc 0
+    mov r0, #0          @ palautetaan exit-koodi 0 (main -> return 0)
+    pop {lr}
+    bx lr               @ palaa mainista
 
 .section .note.GNU-stack,"",%progbits
