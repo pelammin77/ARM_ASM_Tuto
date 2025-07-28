@@ -10,3 +10,4 @@ int main(void) {
     printf("Summa: %d\n", tulos);
     return 0;
 }
+
