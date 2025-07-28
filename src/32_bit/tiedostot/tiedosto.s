@@ -38,7 +38,7 @@ _start:
     @--------------------------
     ldr r0, =filename     @ tiedoston nimi
     mov r1, #0x41         @ lippu: O_WRONLY | O_CREAT
-    mov r2, #0o644        @ oikeudet: rw-r--r-- (oktaalina)
+    mov r2, #420          @ oikeudet: rw-r--r-- 
     mov r7, #5            @ syscall: sys_open
     svc 0
     mov r4, r0            @ tallenna file descriptor (fd) r4:ään
