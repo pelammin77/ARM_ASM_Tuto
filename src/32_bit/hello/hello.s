@@ -1,3 +1,7 @@
+@ stdin = 0
+@ stout = 1
+@ stderr = 2
+
 .global _start
 
 .section .data
